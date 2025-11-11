@@ -11,31 +11,46 @@
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <fcntl.h>
-#include <stdio.h>
 
-size_t	ft_strlen(const char *str)
+char	*next_endl(const char *src, char c)
 {
-	size_t	i;
+	int		i;
+	char	*next;
 
-	if (!str)
-		return (0);
+	if (!src)
+		return (NULL);
+	while (*src)
+	{
+		if (*src == c)
+			break ;
+		src++;
+	}
+	if (*src == 0 || *(src + 1)  == 0)
+		return (NULL);
+	src++;
+	next = malloc (sizeof(char) * (ft_strlen(src) + 1));
+	if (!next)
+		return (NULL);
 	i = -1;
-	while (str[++i])
-		;
-	return (i);
+	while (src[++i])
+		next[i] = src[i];
+	next[i] = '\0';
+	return (next);
 }
 
-int	find_bline(char *buffer)
+size_t	find_bline(char *buffer)
 {
-	int	len;
+	size_t	len;
 
 	len = 0;
-	while (buffer[len] && len < BUFFER_SIZE + 1)
+	if (buffer)
 	{
-		if (buffer[len] == '\n')
-			break ;
-	len++;
+		while (buffer[len] && len < BUFFER_SIZE + 1)
+		{
+			if (buffer[len] == '\n')
+				break ;
+		len++;
+		}
 	}
 	return (len);
 }
@@ -49,7 +64,10 @@ char	*read_file(int fd, char *buffer)
 		return (NULL);
 	nbytes = read(fd, buffer, BUFFER_SIZE);
 	if (nbytes <= 0)
+	{
+		free (buffer);
 		return (NULL);
+	}
 	return (buffer);
 }
 char	*add_text(char *line, char *buffer)
@@ -60,7 +78,8 @@ char	*add_text(char *line, char *buffer)
 	line = ft_strjoin(temp,  buffer);
 	if (!line)
 		return (NULL);
-	free (temp);
+	if (temp)
+		free (temp);
 	return (line);
 }
 
@@ -68,9 +87,9 @@ char	*get_next_line(int fd)
 {
 	char		*line;
 	char		*buffer;
-	static char	*prev;
+	static char	*next;
 	
-	buffer = prev;
+	buffer = next;
 	line = NULL;
 	while (1)
 	{
@@ -79,32 +98,17 @@ char	*get_next_line(int fd)
 		if (!buffer)
 			return (line);
 		line = add_text(line, buffer);
-		if (find_bline(buffer) == ft_strlen(buffer) && buffer[BUFFER_SIZE - 1] != '\n')
+		if (find_bline(buffer) == ft_strlen(buffer) && buffer[ft_strlen(buffer) - 1] != '\n')
 		{
 			free(buffer);
 			buffer = NULL;
-			continue ;
+			next = NULL;
 		}
 		else
 		{
-			prev = ft_strdup(ft_strchr(buffer, '\n'));
+			next = next_endl(buffer, '\n');
+			free(buffer);
 			return (line);
 		}
 	}
-}
-
-int main ()
-{
-	int fd = open("test.txt", O_RDONLY);
-	int	i = 1;
-	char *line;
-
-	line = get_next_line(fd);
-	while (line && i < 10)
-	{
-		printf("line [%d] :%s", i, line);
-		line = get_next_line(fd);
-		i++;
-	}
-	return (0);
 }

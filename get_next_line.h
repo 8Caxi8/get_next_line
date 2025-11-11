@@ -23,17 +23,14 @@
 
 char	*get_next_line(int fd);
 void	*ft_calloc(size_t nmemb, size_t size);
-void	ft_bzero(void *s, size_t n);
 char	*ft_strjoin(char const *s1, char const *s2);
 size_t	ft_strlcpy(char *dest, const char *src, size_t size);
 size_t	ft_strlcat(char *dest, const char *src, size_t size);
 size_t	ft_strlen(const char *str);
-int	find_bline(char *buffer);
+size_t	find_bline(char *buffer);
 char	*read_file(int fd, char *buffer);
 char	*add_text(char *line, char *buffer);
-char	*get_next_line(int fd);
-char	*ft_strdup(const char *src);
-char	*ft_strchr(const char *s, int c);
+char	*next_endl(const char *src, char c);
 
 
 #endif

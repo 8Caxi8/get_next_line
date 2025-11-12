@@ -4,19 +4,25 @@
 
 int main ()
 {
-	int fd = open("test.txt", O_RDONLY);
-	int	i = 1;
-	char *linha;
+	int fd1 = open("test.txt", O_RDONLY);
+	int fd2 = open("test2.txt", O_RDONLY);
+	int fd3 = 0;
+	int	i = 0;
+	char	*line;
 
-	linha = get_next_line(fd);
-	while (linha)
-	{
-		printf("linha [%d] :%s", i, linha);
-		linha = get_next_line(fd);
-		i++;
-	}
+	line = get_next_line(5);
+	printf("linha [%d] :%s", ++i, line);
+	free(line);
 
-	free(linha);
-	close (fd);
+	line = get_next_line(fd2);
+	printf("linha [%d] :%s", ++i, line);
+	free(line);
+
+	line = get_next_line(fd2);
+	printf("linha [%d] :%s", ++i, line);
+	free(line);
+
+	close (fd1);
+	close (fd2);
 	return (0);
 }

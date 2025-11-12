@@ -1,14 +1,14 @@
-/* ************************************************************************** */
+/******************************************************************************/
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dansimoe <dansimoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/10 13:52:36 by dansimoe          #+#    #+#             */
-/*   Updated: 2025/11/10 17:34:13 by dansimoe         ###   ########.fr       */
+/*   Created: 2025/11/12 16:49:42 by dansimoe          #+#    #+#             */
+/*   Updated: 2025/11/12 16:49:55 by dansimoe         ###   ########.fr       */
 /*                                                                            */
-/* ************************************************************************** */
+/******************************************************************************/
 
 #include "get_next_line.h"
 
@@ -30,69 +30,30 @@ void	*ft_calloc(size_t nmemb, size_t size)
 	return (buffer);
 }
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*ft_strjoin(char *s1, char *s2)
 {
-	size_t	len;
+	size_t	len_t;
+	size_t	len_s1;
+	size_t	i;
 	char	*a;
 
-	if (!s1 && !s2)
-		return (NULL);
-	if (!s1)
-		s1 = "";
-	if (!s2)
-		s2 = "";
-	len = ft_strlen(s1) + ft_strlen(s2);
-	a = malloc(len + 2);
+	len_s1 = ft_strlen(s1);
+	len_t = len_s1 + ft_strlen(s2);
+	a = ft_calloc(len_t + 1, sizeof(char));
 	if (!a)
 		return (NULL);
-	ft_strlcpy(a, s1, len + 1);
-	ft_strlcat(a, s2, len + 2);
+	i = -1;
+	if (s1)
+	{
+		while (s1[++i])
+			a[i] = s1[i];
+		free(s1);
+	}
+	i = -1;
+	while (s2[++i])
+		a[i + len_s1] = s2[i];
+	a[len_t] = 0;
 	return (a);
-}
-
-size_t	ft_strlcpy(char *dest, const char *src, size_t size)
-{
-	size_t	i;
-
-	i = 0;
-	if (size > 0)
-	{
-		while (src[i] && i < size - 1)
-		{
-			dest[i] = src[i];
-			i++;
-		}
-		dest[i] = '\0';
-	}
-	while (src[i])
-		i++;
-	return (i);
-}
-
-size_t	ft_strlcat(char *dest, const char *src, size_t size)
-{
-	size_t	i;
-	size_t	dest_len;
-	size_t	src_len;
-
-	dest_len = ft_strlen(dest);
-	src_len = ft_strlen((char *) src);
-	if (size <= dest_len)
-		return (src_len + size);
-	i = 0;
-	while (src[i] && i + dest_len < size - 1)
-	{
-		dest[dest_len + i] = src[i];
-		i++;
-		if (src[i - 1] == '\n')
-			break ;
-	}
-	while (i + dest_len < size)
-	{
-		dest[dest_len + i] = 0;
-		i++;
-	}
-	return (dest_len + src_len);
 }
 
 size_t	ft_strlen(const char *str)
@@ -105,4 +66,58 @@ size_t	ft_strlen(const char *str)
 	while (str[++i])
 		;
 	return (i);
+}
+
+int	append_line(char *temp, char **line, char **buffer)
+{
+	char	*new;
+
+	if (temp)
+	{
+		new = ft_strjoin(*line, temp);
+		if (!new)
+			return (free(temp), 0);
+		*line = new;
+		new = ft_strjoin(NULL, *buffer + ft_strlen(temp));
+		if (!new)
+			return (free(temp), 0);
+		free(*buffer);
+		free(temp);
+		*buffer = new;
+		return (1);
+	}
+	new = ft_strjoin(*line, *buffer);
+	if (!new)
+		return (0);
+	*line = new;
+	free(*buffer);
+	*buffer = NULL;
+	return (0);
+}
+
+int	get_line(char **line, char **buffer)
+{
+	char	*temp;
+	int		i;
+	int		j;
+
+	if (!*buffer)
+		return (0);
+	temp = NULL;
+	i = -1;
+	j = -1;
+	while ((*buffer)[++i])
+	{
+		if ((*buffer)[i] == '\n')
+		{
+			i++;
+			temp = ft_calloc(sizeof(char), i + 1);
+			if (!temp)
+				return (0);
+			while (++j < i)
+				temp[j] = (*buffer)[j];
+			break ;
+		}
+	}
+	return (append_line(temp, line, buffer));
 }

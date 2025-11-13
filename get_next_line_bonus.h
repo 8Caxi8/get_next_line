@@ -6,14 +6,12 @@
 /*   By: dansimoe <dansimoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/13 12:40:42 by dansimoe          #+#    #+#             */
-/*   Updated: 2025/11/13 12:41:57 by dansimoe         ###   ########.fr       */
+/*   Updated: 2025/11/13 20:54:26 by dansimoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_BONUS_H
 # define GET_NEXT_LINE_BONUS_H
-
-# define MEM_ALLOC "ERROR: error in memory allocation!"
 
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 1024

@@ -6,7 +6,7 @@
 /*   By: dansimoe <dansimoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/13 12:40:53 by dansimoe          #+#    #+#             */
-/*   Updated: 2025/11/13 12:40:54 by dansimoe         ###   ########.fr       */
+/*   Updated: 2025/11/13 20:42:16 by dansimoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void	*ft_calloc(size_t nmemb, size_t size)
 {
 	void	*buffer;
-	int		i;
+	size_t	i;
 
 	if (nmemb == 0 || size == 0)
 		return (malloc(0));
@@ -76,21 +76,23 @@ int	append_line(char *temp, char **line, char **buffer)
 	{
 		*line = ft_strjoin(*line, temp);
 		if (!*line)
-			return (free(temp), 0);
+			return (free(temp), -1);
 		new = ft_strjoin(NULL, *buffer + ft_strlen(temp));
 		if (!new)
-			return (free(temp), 0);
+			return (free(temp), -1);
 		free(*buffer);
-		free(temp);
 		*buffer = new;
-		return (1);
+		return (free(temp), 1);
 	}
 	*line = ft_strjoin(*line, *buffer);
 	if (!*line)
-		return (0);
-	free(*buffer);
-	*buffer = NULL;
-	return (0);
+		return (free(*buffer), *buffer = NULL, 0);
+	if (**line == 0)
+	{
+		free(*line);
+		*line = NULL;
+	}
+	return (free(*buffer), *buffer = NULL, 0);
 }
 
 int	get_line(char **line, char **buffer)

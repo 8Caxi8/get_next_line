@@ -6,7 +6,7 @@
 /*   By: dansimoe <dansimoe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/13 12:40:38 by dansimoe          #+#    #+#             */
-/*   Updated: 2025/11/13 12:41:34 by dansimoe         ###   ########.fr       */
+/*   Updated: 2025/11/13 20:43:30 by dansimoe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,11 @@ char	*get_next_line(int fd)
 			return (free(buffer[fd]), buffer[fd] = NULL, free(line), NULL);
 		buffer[fd] = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 		if (!buffer[fd])
-			return (free(line), NULL);
+		{
+			if (line)
+				free(line);
+			return (NULL);
+		}
 		if (read(fd, buffer[fd], BUFFER_SIZE) <= 0)
 			return (free(buffer[fd]), buffer[fd] = NULL, line);
 	}
